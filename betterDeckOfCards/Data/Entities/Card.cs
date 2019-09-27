@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace betterDeckOfCards.Data
 {
+    [Table("Card")]
     public class Card
     {
         public int Id { get; set; }

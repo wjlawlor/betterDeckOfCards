@@ -143,15 +143,23 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
+    <Folder Include="Views\Decks\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\DecksController.cs" />
+    <Compile Include="Data\DeckContext.cs" />
+    <Compile Include="Data\DeckRepository.cs" />
+    <Compile Include="Data\Entities\Card.cs" />
+    <Compile Include="Data\Entities\Deck.cs" />
+    <Compile Include="Data\Entities\Pile.cs" />
+    <Compile Include="Data\IDeckRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DeckCreate.cs" />
+    <Compile Include="Models\ShortDeckInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,17 @@
+﻿using betterDeckOfCards.Data;
+using System.Data.Entity;
+
+namespace betterDeckOfCards.Data
+{
+    public class DeckContext : DbContext
+    {
+        public DeckContext() : base("name=DeckOfCardsConnection")
+        {
+            Database.SetInitializer<DeckContext>(null);
+        }
+
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<Deck> Decks { get; set; }
+        public DbSet<Pile> Piles { get; set; }
+    }
+}
