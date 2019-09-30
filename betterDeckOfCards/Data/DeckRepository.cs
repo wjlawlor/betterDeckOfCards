@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Data.Entity;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace betterDeckOfCards.Data
 {
@@ -62,5 +65,103 @@ namespace betterDeckOfCards.Data
 
             return deck;
         }
+
+        async public Task<Deck> GetDeck(string deckId)
+        {
+            using (var context = new DeckContext())
+            {
+               Deck deck = await context.Decks
+                    .Include(x => x.Cards)
+                    .Include(x => x.Piles)
+                    .SingleAsync(x => x.DeckId == deckId);
+
+                return deck;
+            }
+        }
+
+        async public Task<Pile> GetPile(string deckId, string pileName)
+        {
+            using (var context = new DeckContext())
+            {
+                Deck deck = await GetDeck(deckId);
+                context.Decks.Attach(deck);
+                Pile pile = deck.Piles.FirstOrDefault(x => x.Name == pileName);
+
+                if(pile == null)
+                {
+                    pile = new Pile()
+                    {
+                        Name = pileName,
+                        DeckId = deck.Id,
+                        Deck = deck
+                    };
+                    context.Piles.Add(pile);
+                }
+
+                await context.SaveChangesAsync();
+
+                return pile;
+            }
+        }
+
+        async public Task<Card> GetCard(string deckId, string value)
+        {
+            using (var context = new DeckContext())
+            {
+                Deck deck = await GetDeck(deckId);
+                Card card = deck.Cards.FirstOrDefault(x => x.Code == value);
+
+                return card;
+            }
+        }
+
+        async public Task<Pile> PutCardsInPile (string deckId, string pileName, List<string> codes)
+        {
+            //Deck deck = await GetDeck(deckId);
+            //Pile pile = deck.Piles.FirstOrDefault(x => x.Name == pileName);
+            
+            using (var context = new DeckContext())
+            {
+                Pile pile = await context.Piles.FirstOrDefaultAsync(x => x.Name == pileName && x.Deck.DeckId == deckId);
+                List<Card> ourCards = await context.Cards.Where(x => codes.Contains(x.Code)).ToListAsync();
+                foreach (Card card in ourCards)
+                {
+                    card.Pile = pile;
+                    pile.Cards.Add(card);
+                }
+                await context.SaveChangesAsync();
+                return pile;
+            }
+        }
+
+        async public Task<Deck> DrawCardsAsync(string deckId, int numberToDraw)
+        {
+            using (var context = new DeckContext())
+            {
+                Deck deck = await context.Decks
+                  .Include(x => x.Cards)
+                  .SingleAsync(x => x.DeckId == deckId);
+
+                foreach (Card card in deck.Cards)
+                {
+                    if (!card.Drawn)
+                    {
+                        card.Drawn = true;
+                        numberToDraw--;
+                    }
+                    if (numberToDraw == 0)
+                    {
+                        break;
+                    }
+                }
+
+                await context.SaveChangesAsync();
+
+                return deck;
+            }
+        }
+
+        
+       
     }
 }

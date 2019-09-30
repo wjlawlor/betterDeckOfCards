@@ -1,5 +1,4 @@
-﻿using betterDeckOfCards.Data;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 
 namespace betterDeckOfCards.Data
 {
